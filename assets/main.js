@@ -1,1 +1,3 @@
-main.js
+function enviarPeticion(url, datos, callback){
+	
+}
