@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>Document</title>    
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <form id="formulario">
+                    <div class="mb-3">
+                        <label for="id" class="form-label">ID</label>
+                        <input type="number" class="form-control" id="id" name="id">
+                    </div>
+                    <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre">
+                    </div>
+                    <div class="mb-3">
+                        <label for="correo" class="form-label">Correo</label>
+                        <input type="email" class="form-control" id="correo" name="correo">
+                    </div>
+                    <input type="submit" class="btn btn-success" value="Guardar" id="guardar">
+                    <input type="button" class="btn btn-warning" value="Actualizar" id="actualizar">
+                </form>
+            </div>
+            <div class="col">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contenido"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            //Acciones cuando la aplicación inicie
+            $('#actualizar').hide()
+
+            //Consultar
+            $.ajax({
+                url: 'consultar.php',
+                type: 'GET',
+                dataType: 'json',
+                data:{
+
+                },
+                success: function(respuesta){
+                    for(i = 0; i < respuesta.length; i++){
+                        $('#contenido').append(`<tr id="${respuesta[i].id}"><td>${respuesta[i].id}</td>
+                                                <td>${respuesta[i].nombre}</td>
+                                                <td>${respuesta[i].correo}</td>
+                                                <td><button type="button" class="btn btn-warning" onClick="editar(${respuesta[i].id},'${respuesta[i].nombre}','${respuesta[i].correo}')">Editar</button></td>
+                                                <td><button type="button" class="btn btn-danger" onClick="borrar(${respuesta[i].id})">Eliminar</button></td></tr>`)
+                    }
+                }
+            })
+
+            //Guardar
+            $('#formulario').on('submit', function(evento){
+                evento.preventDefault()
+                //Petición al servidor
+                $.ajax({
+                    url: 'guardar.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        id: $('#id').val(),
+                        nombre: $('#nombre').val(),
+                        correo: $('#correo').val()
+                    },
+                    success: function(respuesta){
+                        if(respuesta.ejecuto == false){
+                            console.error(respuesta.msg)
+                        }else{
+                            $('#contenido').append(`<tr id="${$('#id').val()}"><td>${$('#id').val()}</td>
+                                                <td>${$('#nombre').val()}</td>
+                                                <td>${$('#correo').val()}</td>
+                                                <td><button type="button" class="btn btn-danger" onClick="borrar(${$('#id').val()})">Eliminar</button></td></tr>`)
+                        }
+                    }
+                })
+            })
+
+            //Actualizar
+            $('#actualizar').on('click', function(){
+                $.ajax({
+                    url: 'actualizar.php',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {
+                        id:$('#id').val(),
+                        nombre:$('#nombre').val(),
+                        correo:$('#correo').val()
+                    },
+                    success: function(respuesta){
+                        if(respuesta.ejecuto == false){
+                            console.log(respuesta.msg)
+                        }else{
+                            $('#'+respuesta.id).replaceWith(`<tr id="${respuesta.id}"><td>${respuesta.id}</td>
+                                                <td>${$('#nombre').val()}</td>
+                                                <td>${$('#correo').val()}</td>
+                                                <td><button type="button" class="btn btn-danger" onClick="borrar(${respuesta.id})">Eliminar</button></td></tr>`)
+                        }
+                    }
+                })
+            })
+        })
+
+        function borrar(idu){
+            $.ajax({
+                url: 'borrar.php',
+                type: 'POST',
+                data: {
+                    id: idu
+                },
+                success: function(respuesta){
+                    $('#'+idu).hide()
+                }
+            })
+        }
+
+        function editar(id,nombre,correo){
+            $('#id').val(id)
+            $('#nombre').val(nombre)
+            $('#correo').val(correo)
+            $('#guardar').hide('slow')
+            $('#actualizar').show('slow')
+        }
+    </script>
+</body>
+</html>
