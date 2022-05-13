@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal">Nuevo usuario</button>
+                <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modal" id="nuevo">Nuevo usuario</button>
             </div>
         </div>
         <div class="row">   
@@ -35,7 +35,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="titulo">Nuevo usuario</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -71,7 +71,11 @@
 
         $(document).ready(function(){
             //Acciones cuando la aplicación inicie
-            //$('#actualizar').hide()
+            $('#actualizar').hide()
+
+            $('#nuevo').on('click', function(){
+                $('#titulo').text('Nuevo usuario')
+            })
 
             //Consultar
             $.ajax({
@@ -112,6 +116,7 @@
                             $('#contenido').append(`<tr id="${$('#id').val()}"><td>${$('#id').val()}</td>
                                                 <td>${$('#nombre').val()}</td>
                                                 <td>${$('#correo').val()}</td>
+                                                <td><button type="button" class="btn btn-warning" onClick="editar(${$('#id').val()},'${$('#nombre').val()}','${$('#correo').val()}')">Editar</button></td>
                                                 <td><button type="button" class="btn btn-danger" onClick="borrar(${$('#id').val()})">Eliminar</button></td></tr>`)
                             myModal.hide()
                         }
@@ -137,8 +142,10 @@
                             $('#'+respuesta.id).replaceWith(`<tr id="${respuesta.id}"><td>${respuesta.id}</td>
                                                 <td>${$('#nombre').val()}</td>
                                                 <td>${$('#correo').val()}</td>
+                                                <td><button type="button" class="btn btn-warning" onClick="editar(${$('#id').val()},'${$('#nombre').val()}','${$('#correo').val()}')">Editar</button></td>
                                                 <td><button type="button" class="btn btn-danger" onClick="borrar(${respuesta.id})">Eliminar</button></td></tr>`)
                         }
+                        myModal.hide()
                     }
                 })
             })
@@ -161,6 +168,8 @@
             $('#id').val(id)
             $('#nombre').val(nombre)
             $('#correo').val(correo)
+            $('#titulo').text('Editar usuario')
+            myModal.show()
             $('#guardar').hide('slow')
             $('#actualizar').show('slow')
         }
