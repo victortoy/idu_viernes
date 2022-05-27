@@ -7,7 +7,8 @@ $sentencia = "  UPDATE
                 SET 
                     id = $_REQUEST[id],
                     nombre = '$_REQUEST[nombre]',
-                    correo = '$_REQUEST[correo]'
+                    correo = '$_REQUEST[correo]',
+                    fk_ciudades = '$_REQUEST[fk_ciudades]'
                 WHERE
                     id = $_REQUEST[id]";
 if($mysqli->query($sentencia) == false){

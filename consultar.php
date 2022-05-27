@@ -7,6 +7,7 @@ $sentencia = "SELECT
                 estudiantes.id,
                 estudiantes.nombre,
                 estudiantes.correo,
+                ciudades.id as ciudadC,
                 ciudades.nombre AS nombreC
             FROM 
                 estudiantes LEFT JOIN ciudades ON fk_ciudades = ciudades.id";
