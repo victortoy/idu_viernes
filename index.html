@@ -22,6 +22,7 @@
                             <th>ID</th>
                             <th>Nombre</th>
                             <th>Correo</th>
+                            <th>Ciudad</th>
                             <th>Opciones</th>
                         </tr>
                     </thead>
@@ -52,6 +53,10 @@
                             <label for="correo" class="form-label">Correo</label>
                             <input type="email" class="form-control" id="correo" name="correo">
                         </div>                        
+                        <div class="mb-3">
+                            <label for="fk_ciudades" class="form-label">Ciudad</label>
+                            <select name="fk_ciudades" id="fk_ciudades" class="form-control"></select>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -90,6 +95,7 @@
                         $('#contenido').append(`<tr id="${respuesta[i].id}"><td>${respuesta[i].id}</td>
                                                 <td>${respuesta[i].nombre}</td>
                                                 <td>${respuesta[i].correo}</td>
+                                                <td>${respuesta[i].nombreC}</td>
                                                 <td><button type="button" class="btn btn-warning" onClick="editar(${respuesta[i].id},'${respuesta[i].nombre}','${respuesta[i].correo}')">Editar</button></td>
                                                 <td><button type="button" class="btn btn-danger" onClick="borrar(${respuesta[i].id})">Eliminar</button></td></tr>`)
                     }
@@ -107,7 +113,8 @@
                     data: {
                         id: $('#id').val(),
                         nombre: $('#nombre').val(),
-                        correo: $('#correo').val()
+                        correo: $('#correo').val(),
+                        fk_ciudades: $('#fk_ciudades').val()
                     },
                     success: function(respuesta){
                         if(respuesta.ejecuto == false){
@@ -148,6 +155,21 @@
                         myModal.hide()
                     }
                 })
+            })
+
+            //llenar select de ciudades
+            $.ajax({
+                url: 'ciudadesConsultar.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    
+                },
+                success: function(respuesta){
+                    for(i = 0; i < respuesta.length; i++){
+                        $('#fk_ciudades').append(`<option value="${respuesta[i].id}">${respuesta[i].nombre}</option>`)
+                    }
+                }
             })
         })
 
